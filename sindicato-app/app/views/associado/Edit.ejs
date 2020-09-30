@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title><%- process.env.TITLE %></title>
+
+	<!-- Custom fonts for this template-->
+	<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+	<link
+		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+		rel="stylesheet">
+
+	<!-- Custom styles for this template-->
+	<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+	<!-- Custom styles for this page -->
+	<link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+
+	<script>
+		function myFunction() {
+			var modalidade = $('#modalidade').val();
+			if (modalidade == 'PRESENCIAL') {
+				var selectCourse = document.getElementById('moodle');
+				selectCourse.style.visibility = 'hidden';
+				var precisadef = document.getElementById('precisadefer');
+				precisadef.style.visibility = 'hidden';
+				$('#course').val('');
+			} else {
+				$('#course').prop('disabled', false);
+				$('#course').prop('required', false);
+				$('#precisadef').prop('disabled', false);
+				var selectCourse = document.getElementById('moodle');
+				selectCourse.style.visibility = 'visible';
+				var precisadef = document.getElementById('precisadefer');
+				precisadef.style.visibility = 'visible';
+			}
+		}
+
+		$('#cpf').mask('000.000.000-00');
+		$('#tel_res').mask('(00) 0000-0000');
+		$('#tel_cel').mask('(00) 00000-0000');
+		$('#tel_trab').mask('(00) 0000-0000');
+	</script>
+
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Menu -->
+		<%- include ../template/menu.ejs %>
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Header -->
+				<%- include ../template/topo.ejs %>
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<h1 class="h3 mb-4 text-gray-800">Editar Associado</h1>
+
+					<div class="row">
+
+						<!-- Earnings (Monthly) Card Example -->
+						<div class="col-xl-12 col-md-12 mb-4">
+							<div class="card border-left-primary shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<div class="col mr-2">
+											<form class="user" method="POST" action="/app/<%= page %>/edit/submit">
+
+												<fieldset
+													style="border: 1px groove #FFF !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important;">
+													<legend style="width: auto; padding:0 10px; border-bottom:none;">
+														Informações Gerais</legend>
+
+													<div class="form-group row">
+														<div class="col-sm-6">
+															Nome:
+															<input type="text" class="form-control" id="nome"
+																name="nome" value="<%= nome %>" required>
+														</div>
+
+														<div class="col-sm-3">
+															Matrícula:
+															<input type="text" class="form-control" id="matricula"
+																name="matricula" value="<%= matricula %>"  equired>
+														</div>
+
+														<div class="col-sm-3">
+															Nível:
+															<select name="nivel" id="nivel"
+																class="form-control">
+																<option value="SERVIDOR" <%= nivel == 'SERVIDOR' ? 'selected' : '' %>>Servidor Público Estadual
+																</option>
+																<option value="NAO_SERVIDOR" <%= nivel == 'NAO_SERVIDOR' ? 'selected' : '' %>>Outro</option>
+															</select>
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<div class="col-sm-3">
+															CPF:
+															<input type="text" class="form-control" id="cpf"
+																name="cpf" value="<%= cpf %>" required>
+														</div>
+
+														<div class="col-sm-3">
+															RG:
+															<input type="text" class="form-control" id="rg"
+																name="rg"  value="<%= rg %>" required>
+														</div>
+
+														<div class="col-sm-3">
+															Órgão Expedidor:
+															<input type="text" class="form-control" id="orgao_expedidor"
+																name="orgao_expedidor" value="<%= orgao_expedidor %>" required>
+														</div>
+
+														<div class="col-sm-3">
+															Sexo
+															<select name="sexo" id="sexo" class="form-control">
+																<option value="MASCULINO" <% sexo == 'MASCULINO' ? 'selected' : '' %>>MASCULINO
+																</option>
+																<option value="FEMININO" <% sexo == 'FEMININO' ? 'selected' : '' %>>FEMININO</option>
+															</select>
+														</div>
+
+													</div>
+													<div class="form-group row">
+
+														<div class="col-sm-3">
+															Estado Civil:
+															<select name="tpEstadoCivil" id="tpEstadoCivil"
+																class="form-control">
+																<option value="SOLTEIRO" <% tpEstadoCivil == 'SOLTEIRO' ? 'selected' : '' %>>SOLTEIRO(A)
+																</option>
+																<option value="CASADO" <% tpEstadoCivil == 'CASADO' ? 'selected' : '' %>>CASADO(A)</option>
+																<option value="UNIAO_ESTAVEL" <% tpEstadoCivil == 'UNIAO_ESTAVEL' ? 'selected' : '' %>>UNIAO_ESTAVEL</option>
+																<option value="DIVORCIADO" <% tpEstadoCivil == 'DIVORCIADO' ? 'selected' : '' %>>DIVORCIADO(A)</option>
+																<option value="VIUVO" <% tpEstadoCivil == 'VIUVO' ? 'selected' : '' %>>VIUVO(A)</option>
+																<option value="SEPARADO" <% tpEstadoCivil == 'SEPARADO' ? 'selected' : '' %>>SEPARADO(A)</option>
+															</select>
+														</div>
+
+														<div class="col-sm-3">
+															Data de nascimento: * <% console.log(datanascimento) %>
+															<input type="date" class="form-control" id="datanascimento"
+																name="datanascimento" value="<%= datanascimento %>" required>
+														</div>
+
+														<div class="col-sm-3">
+															Telefone Residencial: <% console.log(endereco) %>
+															<input type="text" class="form-control" id="tel_res"
+																name="tel_res" value="<%= endereco.tel_res %>" maxlength="15">
+														</div>
+
+														<div class="col-sm-3">
+															Telefone Celular:
+															<input type="text" class="form-control" id="tel_cel"
+																name="tel_cel" value="<%= endereco.tel_cel %>" maxlength="15">
+														</div>
+
+													</div>
+
+												</fieldset>
+
+												<fieldset
+													style="border: 1px groove #FFF !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important;">
+
+													<legend style="width: auto; padding:0; border-bottom:none;">Endereço
+													</legend>
+
+													<div class="form-group row">
+														<div class="col-sm-6">
+															Logradouro:
+															<input type="text" class="form-control" id="logradouro"
+																name="logradouro" value="<%= endereco.logradouro %>" required>
+														</div>
+														<div class="col-sm-2">
+															Número:
+															<input type="text" class="form-control" id="numero"
+																name="numero" value="<%= endereco.numero %>" required>
+														</div>
+														<div class="col-sm-4">
+															Complemento:
+															<input type="text" class="form-control" id="complemento"
+																name="complemento" value="<%= endereco.complemento %>">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<div class="col-sm-5">
+															Bairro:
+															<input type="text" class="form-control" id="bairro"
+																name="bairro" value="<%= endereco.bairro %>" required>
+														</div>
+														<div class="col-sm-3">
+															CEP:
+															<input type="text" class="form-control" id="cep" name="cep"
+															value="<%= endereco.cep %>" required>
+														</div>
+
+														<div class="col-sm-4">
+															Município:
+															<select class="form-control" id="municipio"
+																name="municipio">
+																<% for (var i = 0; i < itensEstados.length; i++) { %>
+																<% if (itensEstados[i].id != null ) { %>
+																<option id="estadoid" value="<%- itensEstados[i].id %>">
+																	<%- itensEstados[i].nome %>
+																</option>
+																<% } %>
+																<% } %>
+															</select>
+														</div>
+
+													</div>
+
+												</fieldset>
+
+												<fieldset
+													style="border: 1px groove #FFF !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important;">
+
+													<legend style="width: auto; padding:0; border-bottom:none;">Dados
+														Profissionais
+													</legend>
+
+													<div class="form-group row">
+
+														<div class="col-sm-3">
+															Município de Lotação:
+															<select class="form-control" id="municipio_lotacao"
+																name="municipio_lotacao">
+																<% for (var i = 0; i < itensEstados.length; i++) { %>
+																<% if (itensEstados[i].id != null ) { %>
+																<option id="estadoid" value="<%- itensEstados[i].id %>">
+																	<%- itensEstados[i].nome %>
+																</option>
+																<% } %>
+																<% } %>
+															</select>
+														</div>
+
+														<div class="col-sm-6">
+															Escola de Trabalho: <%= console.log(nome_escola) %>
+															<input type="text" class="form-control" id="nome_escola"
+																name="nome_escola" value="<%= nome_escola %>" required>
+														</div>
+
+														<div class="col-sm-3">
+															Turno:
+															<select name="turno" id="turno"
+																class="form-control">
+																<option value="MATUTINO" <%= turno == 'MATUTINO' ? 'selected' : '' %>>MATUTINO
+																</option>
+																<option value="VESPERTINO" <%= turno == 'VESPERTINO' ? 'selected' : '' %>>VESPERTINO</option>
+																<option value="INTEGRAL" <%= turno == 'INTEGRAL' ? 'selected' : '' %>>INTEGRAL</option>
+																<option value="NOTURNO" <%= turno == 'NOTURNO' ? 'selected' : '' %>>NOTURNO</option>
+															</select>
+														</div>
+
+													</div>
+
+													<div class="form-group row">
+
+														<div class="col-sm-3">
+															Rede de Ensino:
+															<select name="tpRedeEnsino" id="tpRedeEnsino"
+																class="form-control">
+																<option value="ESTADUAL" <%= tpRedeEnsino == 'ESTADUAL' ? 'selected' : '' %>>ESTADUAL
+																</option>
+																<option value="MUNICIPAL" <%= tpRedeEnsino == 'MUNICIPAL' ? 'selected' : '' %>>MUNICIPAL</option>
+																<option value="EFETIVO" <%= tpRedeEnsino == 'EFETIVO' ? 'selected' : '' %>>EFETIVO</option>
+																<option value="CONTRATADO" <%= tpRedeEnsino == 'CONTRATADO' ? 'selected' : '' %>>CONTRATADO</option>
+															</select>
+														</div>
+
+														<div class="col-sm-3">
+															Situação:
+															<select name="situacao" id="situacao" class="form-control">
+																<option value="ATIVO" <%= situacao == 'ATIVO' ? 'selected' : '' %>>ATIVO</option>
+																<option value="APOSENTADO" <%= situacao == 'APOSENTADO' ? 'selected' : '' %>>APOSENTADO</option>
+															</select>
+														</div>
+
+														<div class="col-sm-6">
+															Atividade Funcional: <% console.log(atividade_funcional == '1') %>
+															<select class="form-control selectpicker" id="atividade_funcional"
+																name="atividade_funcional">
+																<option value="0" <%= atividade_funcional == '0' ? 'selected' : '' %>>-SELECIONE-</option>
+																<option value="1" <%= atividade_funcional == '1' ? 'selected' : '' %>>AGENTE ADMINISTRATIVO</option>
+																<option value="21" <%= atividade_funcional == '21' ? 'selected' : '' %>>ASSESSORA PEDAGÓGICA</option>
+																<option value="2" <%= atividade_funcional == '2' ? 'selected' : '' %>>ASSISTENTE ADMINISTRATIVO</option>
+																<option value="3" <%= atividade_funcional == '3' ? 'selected' : '' %>>BIBLIOTECÁRIO(A)</option>
+																<option value="4" <%= atividade_funcional == '4' ? 'selected' : '' %>>COORDENADOR(A)</option>
+																<option value="5" <%= atividade_funcional == '5' ? 'selected' : '' %>>DIGITADOR(A)</option>
+																<option value="6" <%= atividade_funcional == '6' ? 'selected' : '' %>>DIRETOR(A)</option>
+																<option value="7" <%= atividade_funcional == '7' ? 'selected' : '' %>>INSPETOR ESCOLAR</option>
+																<option value="8" <%= atividade_funcional == '8' ? 'selected' : '' %>>MERENDEIRO(A)</option>
+																<option value="9" <%= atividade_funcional == '9' ? 'selected' : '' %>>MOTORISTA</option>
+																<option value="10" <%= atividade_funcional == '10' ? 'selected' : '' %>>ORIENTADOR(A) PEDAGÓGICO(A)</option>
+																<option value="25" <%= atividade_funcional == '25' ? 'selected' : '' %>>PROFESSOR EDUCAÇÃO ESPECIAL</option>
+																<option value="11" <%= atividade_funcional == '11' ? 'selected' : '' %>>PROFESSOR(A)</option>
+																<option value="20" <%= atividade_funcional == '20' ? 'selected' : '' %>>REPRÓGRAFA</option>
+																<option value="12" <%= atividade_funcional == '12' ? 'selected' : '' %>>SECRETÁRIA</option>
+																<option value="14" <%= atividade_funcional == '14' ? 'selected' : '' %>>SERVIÇOS GERAIS</option>
+																<option value="15" <%= atividade_funcional == '15' ? 'selected' : '' %>>SUPERVISOR ESCOLAR</option>
+																<option value="19" <%= atividade_funcional == '19' ? 'selected' : '' %>>TÉCNICO EM INFORMÁTICA</option>
+																<option value="16" <%= atividade_funcional == '16' ? 'selected' : '' %>>VICE DIRETOR(A)</option>
+																<option value="17" <%= atividade_funcional == '17' ? 'selected' : '' %>>VIGILANTE</option>
+																<option value="18" <%= atividade_funcional == '18' ? 'selected' : '' %>>ZELADOR(A)</option>
+															</select>
+														</div>
+
+													</div>
+
+													<div class="form-group row">
+
+														<div class="col-sm-5">
+															Disciplina:
+															<input type="text" class="form-control" id="disciplina"
+																name="disciplina" value="<%= disciplina %>" required>
+														</div>
+
+														<div class="col-sm-3">
+															Escolaridade:
+															<select name="tpEscolaridade" id="tpEscolaridade"
+																class="form-control">
+																<option value="FUNDAMENTAL">FUNDAMENTAL
+																</option>
+																<option value="ENSINO_MEDIO_INCOMPLETO">ENSINO MÉDIO
+																	INCOMPLETO</option>
+																<option value="ENSINO_MEDIO_COMPLETO">ENSINO MÉDIO
+																	COMPLETO</option>
+																<option value="SUPERIOR_INCOMPLETO">SUPERIOR INCOMPLETO
+																</option>
+																<option value="SUPERIOR_COMPLETO">SUPERIOR COMPLETO
+																</option>
+																<option value="ESPECIALIZACAO">ESPECIALIZACAO</option>
+																<option value="MESTRADO">MESTRADO</option>
+																<option value="DOUTORADO">DOUTORADO</option>
+															</select>
+														</div>
+
+														<div class="col-sm-4">
+															Faixa Salarial:
+															<select name="faixaSalario" id="faixaSalario"
+																class="form-control">
+																<option value="UM_SALARIO" <%= faixaSalario == 'UM_SALARIO' ? 'selected' : '' %>>1 SALÁRIO MÍNIMO
+																</option>
+																<option value="DOIS_SALARIO" <%= faixaSalario == 'DOIS_SALARIO' ? 'selected' : '' %>>2 SALÁRIO MÍNIMO</option>
+																<option value="TREIS_SALARIO" <%= faixaSalario == 'TREIS_SALARIO' ? 'selected' : '' %>>3 SALÁRIO MÍNIMO</option>
+																<option value="QUATRO_SALARIO" <%= faixaSalario == 'QUATRO_SALARIO' ? 'selected' : '' %>>4 SALÁRIO MÍNIMO
+																</option>
+																<option value="MAIOR_CINCO_SALARIO" <%= faixaSalario == 'MAIOR_CINCO_SALARIO' ? 'selected' : '' %>>acima de 5 SALÁRIO MÍNIMO
+																</option>
+															</select>
+														</div>
+
+													</div>
+
+												</fieldset>
+												<input type="hidden" name="id" id="id" value="<%= id %>">
+												<div class="form-group row">
+													<div class="col-sm-4">
+														<input type="submit" value="Salvar"
+															class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" />
+														<a href="/app/<%= page %>/list"
+															class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm">Cancelar</a>
+													</div>
+												</div>
+
+
+
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Rodapé -->
+			<%- include ../template/rodape.ejs %>
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top">
+		<i class="fas fa-angle-up"></i>
+	</a>
+
+	<!-- Logout Modal-->
+	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<a class="btn btn-primary" href="login.html">Logout</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$('.toast').toast('show');
+	</script>
+	<!-- Bootstrap core JavaScript-->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Core plugin JavaScript-->
+	<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script src="/js/sb-admin-2.min.js"></script>
+
+	<!-- Page level plugins -->
+	<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+	<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+	<!-- Page level custom scripts -->
+	<script src="/js/demo/datatables-demo.js"></script>
+
+
+</body>
+
+</html>

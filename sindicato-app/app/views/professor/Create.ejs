@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title><%- process.env.TITLE %></title>
+
+
+	<!-- Custom fonts for this template-->
+	<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+	<link
+		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+		rel="stylesheet">
+
+	<!-- Custom styles for this template-->
+	<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+	<!-- Custom styles for this page -->
+	<link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+
+	<script>
+		var limit = 8;
+		var limit2;
+		function myFunction() {
+
+			var estadoId = $('#estado').val();
+
+			$('#municipio').empty()
+			$.ajax({
+				type: "GET",
+				url: "/app/instituicao/municipio/" + estadoId,
+				success: function (data) {
+					$.each(data, function (i, d) {
+						$('#municipio').append('<option value="' + d.id + '">' + d.nome + '</option>');
+					});
+				}
+			})
+		}
+
+		function limitCurso() {
+			document.getElementById("curso1").removeAttribute("disabled");
+			var curso0 = $('#curso0').val();
+			console.log(curso0);
+			
+			if ($('#curso1').val().length == limit2) {
+				$('#curso1').value = $('#curso1').val()-1;
+			}
+			if (curso0.length === limit) {
+				document.getElementById("curso1").setAttribute("disabled", "disabled");
+			}
+			limit2 = limit - curso0.length;
+			
+		}
+
+		function limitCurso1() {		
+			var curso1 = $('#curso1').val();
+			if (curso1.length == limit2) {
+				document.getElementById("curso1").setAttribute("disabled", "disabled");
+			}
+		}
+
+		function getCursos(numero) {
+			var categoria0 = $('#categoria0').val();
+			var categoria1 = document.getElementById("categoria1");
+			if (numero == '0') {
+				$('#categoria1').empty();
+				$('#curso1').empty();
+				$('#categoria1').append('<option value="">Selecione...</option>');
+				<% areasInteresse.forEach(function(dat) { %>	 				
+					$('#categoria1').append('<option value="<%= dat.id %>"><%= dat.nome %></option>');
+				<% }); %>
+			}
+			for(var i = 0; i < categoria1.length; i++) {
+				if (categoria1.options[i].value == categoria0) {
+					categoria1.remove(i);
+				}
+			}
+			var categoriad = '#categoria' + numero;
+			var categoriaId = $(categoriad).val();
+			var idcurso = '#curso' + numero;
+			$(idcurso).empty()
+			$.ajax({
+				type: "GET",
+				url: "/app/professor/categoria/" + categoriaId,
+				success: function (data) {
+					$.each(data, function (i, d) {
+						console.log(d.id);
+						
+						$(idcurso).append('<option class="checkbox" value="' + d.id + '">' + d.nome + '</option>');
+					});
+				}
+			})
+		}
+	</script>
+
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Menu -->
+		<%- include ../template/menu.ejs %>
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Header -->
+				<%- include ../template/topo.ejs %>
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<h1 class="h3 mb-4 text-gray-800">Credenciamento</h1>
+
+					<div class="row">
+
+						<!-- Earnings (Monthly) Card Example -->
+						<div class="col-xl-12 col-md-12 mb-4">
+							<div class="card border-left-primary shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<div class="col mr-2">
+											<form class="user" method="POST" action="/app/<%= page %>/create/submit"
+												enctype="multipart/form-data">
+												<h2>Informações</h2>
+												<br />
+												<div class="form-group row">
+													<div class="col-sm-3">
+														PIS
+														<input type="text" class="form-control" id="pis" name="pis">
+													</div>
+													<div class="col-sm-3">
+														PASEP
+														<input type="text" class="form-control" id="pasep" name="pasep">
+													</div>
+													<div class="col-sm-2">
+														INSS
+														<input type="text" class="form-control" id="inss" name="inss">
+													</div>
+													<div class="col-sm-2">
+														Estado Civil
+														<select required class="form-control" name="estadocivil"
+															id="estadocivil">
+															<option value="">Selecione</option>
+															<option value="SOLTEIRO">Solteiro
+															</option>
+															<option value="CASADO">Casado</option>
+															<option value="UNIAO_ESTAVEL">União Estável
+															</option>
+															<option value="DIVORCIADO">Divorciado</option>
+															<option value="VIUVO">Viúvo</option>
+															<option value="SEPARADO">Separado</option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+														<div class="col-sm-4">
+															Documentos
+															<input class="form-control" type="file" name="documento"
+																id="documento" accept=".pdf"
+																multiple="multiple">
+														</div>
+													</div>
+
+													<div id="div_interesses">
+														<ul value="interesses" class="list-unstyled"
+															id="interesses">
+															<li id="interesses">
+																<div class="row">
+																	<div class="col-sm-4">
+																		Áreas de Interesse 1
+																		<select class="form-control" id="categoria0"
+																			name="categoria" onchange="getCursos('0')" >
+																			<option value="">Selecione...</option>
+																			<% for (var i = 0; i < areasInteresse.length; i++) { %>
+																			<option id=""
+																				value="<%- areasInteresse[i].id %>">
+																				<%- areasInteresse[i].nome %></option>
+																			<% } %>
+																		</select>
+																	</div>
+																	<div class="col-sm-4">
+																		Subárea(s) de Interesse: <span style="color: red;">(Para selecionar mais de uma opção mantenha pressionada a tecla CTRL.)</span>
+																		<select class="form-control" id="curso0"
+																			name="curso" multiple onchange="limitCurso()" >
+																			<option value="null">Selecione...</option>
+																		</select>
+																	</div>
+																</div><br/>
+																<div class="row">
+																	<div class="col-sm-4">
+																		Áreas de Interesse 2
+																		<select class="form-control" id="categoria1"
+																			name="categoria1" onchange="getCursos('1')">
+																			<option value="">Selecione...</option>
+																			<% for (var i = 0; i < areasInteresse.length; i++) { %>
+																			<option id=""
+																				value="<%- areasInteresse[i].id %>">
+																				<%- areasInteresse[i].nome %></option>
+																			<% } %>
+																		</select>
+																	</div>
+																	<div class="col-sm-4">
+																		Subárea(s) de Interesse: <span style="color: red;">(Para selecionar mais de uma opção mantenha pressionada a tecla CTRL.)</span>
+																		<select class="form-control" id="curso1"
+																			name="curso1" multiple onchange="limitCurso1()">
+																			<option value="null">Selecione...</option>
+																		</select>
+																	</div>
+																</div>
+															</li>
+														</ul>
+													</div>
+													<button id="btnAddInteresse" type="button"
+														class="btn btn-sm btn-success mb-2 mt-2">Adicionar Área e Subárea</button>
+														<br/><br/>
+												<h2>Formações</h2>
+												<div id="div_formacoes">
+													<ul value="formacoes" class="list-unstyled" id="formacoes">
+														<li id="formacoes">
+															<div class="row">
+																<div class="col-sm-3">
+																	Formação
+																	<select required class="form-control"
+																		name="tpFormacao" id="tpFormacao">
+																		<option value="">Selecione
+																		</option>
+																		<option value="ENSINO_MEDIO">Ensino Médio
+																		</option>
+																		<option value="SUPERIOR_INCOMPLETO">Superior
+																			Incompleto</option>
+																		<option value="SUPERIOR_COMPLETO">Superior
+																			Completo</option>
+																		<option value="POS_GRADUACAO">Pós Graduação
+																		</option>
+																		<option value="MESTRADO">Mestrado</option>
+																		<option value="DOUTORADO">Doutorado</option>
+																	</select>
+																</div>
+																<div class="col-sm-3">
+																	Instituição
+																	<input required type="text" class="form-control"
+																		id="instituicao" name="instituicao">
+																</div>
+																<div required class="col-sm-2">
+																	Curso
+																	<input type="text" class="form-control" id="cursoInstituicao"
+																		name="cursoInstituicao">
+																</div>
+																<div required class="col-sm-2">
+																	Ano
+																	<input type="number" class="form-control" id="ano"
+																		name="ano">
+																</div>
+															</div>
+														</li>
+													</ul>
+												</div>
+												<button id="btnAddFormacao" type="button"
+													class="btn btn-sm btn-success mb-2 mt-2">Adicionar
+													Formação</button>
+
+													<br/><br/>
+												<h2>Experiências</h2>
+
+												<div id="div_experiencias">
+													<ul value="experiencias" class="list-unstyled" id="experiencias">
+														<li id="experiencias">
+															<div class="row">
+																<div class="col-sm-2">
+																	Curso
+																	<input  type="text" class="form-control"
+																		id="experienciaCurso" name="experienciaCurso">
+																</div>
+																<div class="col-sm-1">
+																	Carga Horária
+																	<input  type="number" class="form-control"
+																		id="experienciaCargaHoraria"
+																		name="experienciaCargaHoraria">
+																</div>
+																<div class="col-sm-3">
+																	Instituição
+																	<input  type="text" class="form-control"
+																		id="experienciaInstituicao"
+																		name="experienciaInstituicao">
+																</div>
+
+																<div class="col-sm-2">
+																	Inicio
+																	<input  type="date" class="form-control"
+																		id="experienciaInicio" name="experienciaInicio">
+																</div>
+																<div class="col-sm-2">
+																	Fim
+																	<input  type="date" class="form-control"
+																		id="experienciaFim" name="experienciaFim">
+																</div>
+															</div>
+														</li>
+													</ul>
+												</div>
+												<br />
+												<button id="btnAddExperiencia" type="button"
+													class="btn btn-sm btn-success mt-2 mb-2">Adicionar
+													Experiência</button>
+
+												<button class="btn btn-lg btn-success float-right">Salvar</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Rodapé -->
+			<%- include ../template/rodape.ejs %>
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top">
+		<i class="fas fa-angle-up"></i>
+	</a>
+
+	<!-- Logout Modal-->
+	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<a class="btn btn-primary" href="login.html">Logout</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Core plugin JavaScript-->
+	<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script src="/js/sb-admin-2.min.js"></script>
+
+	<!-- Page level plugins -->
+	<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+	<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+	<!-- Page level custom scripts -->
+	<script src="/js/demo/datatables-demo.js"></script>
+	<script>
+		$('.toast').toast('show');
+	</script>
+	<script>
+		$(function () {
+			var scntDiv = $('#div_experiencias');
+			var i = $('#div_experiencias li').length + 1;
+
+			$('#btnAddExperiencia').on('click', function () {
+				$(
+					'<div id="addExperiencia" class="row">' +
+					'<div class="col-sm-2">' +
+					'Curso' +
+					'	<input type="text" class="form-control" id="experienciaCurso" name="experienciaCurso">' +
+					'</div>' +
+					'<div class="col-sm-1">Carga Horária<input type="number" class="form-control"' +
+					'id="experienciaCargaHoraria" name="experienciaCargaHoraria"></div>' +
+					'<div class="col-sm-3">' +
+					'Instituição' +
+					'	<input type="text" class="form-control" id="experienciaInstituicao" name="experienciaInstituicao">' +
+					'</div>' +
+					'<div class="col-sm-2">Inicio<input type="date" class="form-control"' +
+					'id="experienciaInicio" name="experienciaInicio"></div>' +
+					'<div class="col-sm-2">Fim<input type="date"' +
+					'class="form-control" id="experienciaFim" name="experienciaFim"></div>' +
+					'<div class="col-sm-1"><br/>' +
+					'<button id="btnRemExperiencia" type="button" class="btn btn-sm btn-danger">' +
+					'<i class="fas fa-times-circle"></i>' +
+					'</button>'
+					+ '</div>' +
+					'</div>'
+				).appendTo(scntDiv);
+				i++;
+				return false;
+			});
+
+			$(document).on('click', '#btnRemExperiencia', function () {
+				if (i > 2) {
+					$('#addExperiencia').remove();
+					i--;
+				}
+				return false;
+			});
+		});
+	</script>
+	<script>
+		$(function () {
+			var scntDiv = $('#div_formacoes');
+			var i = $('#div_formacoes li').length + 1;
+
+			$('#btnAddFormacao').on('click', function () {
+				$(
+					'<div id="addFormacao" class="row">' +
+					'<div class="col-sm-3">' +
+					'Formação' +
+					'	<select class="form-control" name="tpFormacao"' +
+					'id="tpFormacao">' +
+					'<option value="">Selecione</option>' +
+					'<option value="ENSINO_MEDIO">Ensino Médio</option>' +
+					'<option value="SUPERIOR_INCOMPLETO">Superior Incompleto</option>' +
+					'<option value="SUPERIOR_COMPLETO">SuperiorCompleto</option>' +
+					'<option value="POS_GRADUACAO">Pós Graduação</option>' +
+					'<option value="MESTRADO">Mestrado</option>' +
+					'<option value="DOUTORADO">Doutorado</option> </select> </div>' +
+					'<div class="col-sm-3">' +
+					'Instituição' +
+					'	<input type="text" class="form-control" id="instituicao" name="instituicao">' +
+					'</div>' +
+					'<div class="col-sm-2">Curso<input type="text" class="form-control"' +
+					'id="cursoInstituicao" name="cursoInstituicao"></div>' +
+					'<div class="col-sm-2">Ano<input type="number"' +
+					'class="form-control" id="ano" name="ano"></div>' +
+					'<div class="col-sm-1"><br/>' +
+					'<button id="btnRemFormacao" type="button" class="btn btn-sm btn-danger">' +
+					'<i class="fas fa-times-circle"></i>' +
+					'</button>'
+					+ '</div>' +
+					'</div>'
+				).appendTo(scntDiv);
+				i++;
+				return false;
+			});
+
+			$(document).on('click', '#btnRemFormacao', function () {
+				if (i > 2) {
+					$('#addFormacao').remove();
+					i--;
+				}
+				return false;
+			});
+		});
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title><%- process.env.TITLE %></title>
+
+		<!-- Custom fonts for this template-->
+		<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+		<link
+			href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+			rel="stylesheet">
+
+		<!-- Custom styles for this template-->
+		<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+		<!-- Custom styles for this page -->
+		<link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+
+		<script>
+
+			function verificaOrgao() {
+				console.log('teste')
+				var orgao = $('#orgao').val();
+				// ID DO ORGAO 'OUTRO' = 172
+				if (orgao === '172') {
+
+					$("#div_lotacao").hide();
+					$("#lotacao").removeAttr("required");
+					$("#lotacao").val("");
+					$("#div_cargo").hide();
+					$("#cargo").removeAttr("required");
+					$("#cargo").val("");
+					$("#div_funcao").hide();
+					$("#funcao").removeAttr("required");
+					$("#funcao").val("");
+					$("#div_area").hide();
+					$("#area").removeAttr("required");
+					$("#area").val("");
+					$("#div_ID").hide();
+					$("#matricula").removeAttr("required");
+					$("#matricula").val("");
+				} else {
+					$("#div_lotacao").show();
+					$("#lotacao").attr("required", "required");
+					$("#div_cargo").show();
+					$("#cargo").attr("required", "required");
+					$("#div_funcao").show();
+					$("#funcao").attr("required", "required");
+					$("#div_area").show();
+					$("#area").attr("required", "required");
+					$("#div_ID").show();
+					$("#matricula").attr("required", "required");
+				}
+
+			}
+			function verificaEmail() {
+				var email = $('#email').val();
+				var emailrepetido = $('#emailrepetido').val();
+				if (emailrepetido != email) {
+					alert('Emails não correspondem.');
+				}
+			}
+			$('#cep').mask('00000-000');
+			$('#contato').mask('(00) 0000-0000');
+			$('#celular').mask('(00) 0 0000-0000');
+
+			function myFunction() {
+
+				var estadoId = $('#estado').val();
+
+				$('#municipio').empty()
+				$.ajax({
+					type: "GET",
+					url: "/app/instituicao/municipio/" + estadoId,
+					success: function (data) {
+						$.each(data, function (i, d) {
+							$('#municipio').append('<option value="' + d.id + '">' + d.nome + '</option>');
+						});
+					}
+				})
+			}
+
+			$(document).ready(function () {
+				var estadoId = $('#estado').val();
+				verificaOrgao();
+
+				$('#municipio').empty()
+				$.ajax({
+					type: "GET",
+					url: "/app/instituicao/municipio/" + estadoId,
+					success: function (data) {
+						$.each(data, function (i, d) {
+							if (d.id == <%= endereco.municipio.id %>) {
+							$('#municipio').append('<option selected value="' + d.id + '">' + d.nome + '</option>');
+						}else {
+							$('#municipio').append('<option value="' + d.id + '">' + d.nome + '</option>');
+						}
+
+				});
+			}
+				})
+
+			});
+
+		</script>
+
+	</head>
+
+	<body id="page-top">
+
+		<!-- Page Wrapper -->
+		<div id="wrapper">
+
+			<!-- Menu -->
+			<%- include ../template/menu.ejs %>
+
+			<!-- Content Wrapper -->
+			<div id="content-wrapper" class="d-flex flex-column">
+
+				<!-- Main Content -->
+				<div id="content">
+
+					<!-- Header -->
+					<%- include ../template/topo.ejs %>
+
+					<!-- Begin Page Content -->
+					<div class="container-fluid">
+
+						<!-- Page Heading -->
+						<h1 class="h3 mb-4 text-gray-800">Informações do Aluno</h1>
+						<%- messages() %>
+
+						<div class="row">
+
+							<!-- Earnings (Monthly) Card Example -->
+							<div class="col-xl-12 col-md-12 mb-4">
+								<div class="card border-left-primary shadow h-100 py-2">
+									<div class="card-body">
+										<div class="row no-gutters align-items-center">
+											<div class="col mr-2">
+												<form class="user" method="POST"
+													action="/app/<%= page %>/edit/submit"
+													enctype="multipart/form-data">
+													<fieldset
+														style="border: 1px groove #FFF !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important;">
+														<legend
+															style="width: auto; padding:0 10px; border-bottom:none;">
+															Informações Básicas do Aluno</legend>
+														<div class="form-group row">
+															<div class="col-sm-4">
+																Nome
+																<input type="text" class="form-control" id="nome"
+																	name="nome" value="<%= nome %>">
+															</div>
+															<div class="col-sm-4">
+																Nome Social
+																<input type="text" class="form-control" id="nomesocial"
+																	name="nomesocial" value="<%= nomesocial %>">
+															</div>
+															<div class="col-sm-4">
+																Sexo
+																<select class="form-control" name="sexo" id="sexo">
+																	<option value="Feminino"
+																		<%= sexo === 'Feminino' ? 'selected' : '' %>>
+																		Feminino</option>
+																	<option value="Masculino"
+																		<%= sexo === 'Masculino' ? 'selected' : '' %>>
+																		Masculino</option>
+																</select>
+															</div>
+														</div>
+
+														<div class="form-group row">
+															<div class="col-sm-4">
+																Data de Nascimento
+																<input type="date" class="form-control"
+																	id="datanascimento" name="datanascimento"
+																	value="<%= datanascimento %>">
+															</div>
+															<div class="col-sm-4">
+																Formação
+																<select class="form-control" name="formacao"
+																	id="formacao">
+																	<option value="ENSINO_MEDIO"
+																		<%= tpformacao === 'ENSINO_MEDIO' ? 'selected' : '' %>>
+																		Ensino
+																		Médio</option>
+																	<option value="SUPERIOR_INCOMPLETO"
+																		<%= tpformacao === 'SUPERIOR_INCOMPLETO' ? 'selected' : '' %>>
+																		Superior
+																		Incompleto</option>
+																	<option value="SUPERIOR_COMPLETO"
+																		<%= tpformacao === 'SUPERIOR_COMPLETO' ? 'selected' : '' %>>
+																		Superior
+																		Completo</option>
+																	<option value="POS_GRADUACAO"
+																		<%= tpformacao === 'POS_GRADUACAO' ? 'selected' : '' %>>
+																		Pós
+																		Graduação</option>
+																	<option value="MESTRADO"
+																		<%= tpformacao === 'MESTRADO' ? 'selected' : '' %>>
+																		Mestrado
+																	</option>
+																	<option value="DOUTORADO"
+																		<%= tpformacao === 'DOUTORADO' ? 'selected' : '' %>>
+																		Doutorado
+																	</option>
+																</select>
+															</div>
+															<div class="col-sm-4">
+																RG
+																<input type="text" class="form-control" id="rg"
+																	name="rg" disabled value="<%= rg %>">
+															</div>
+														</div>
+
+														<div class="form-group row">
+															<div class="col-sm-4">
+																CPF
+																<input type="text" class="form-control" id="cpf"
+																	name="cpf" disabled value="<%= cpf %>">
+															</div>
+															<div class="col-sm-4">
+																Email
+																<input type="email" class="form-control" id="email"
+																	name="email" value="<%= usuario.email %>">
+															</div>
+															<div class="col-sm-4">
+																Repetir email:
+																<input type="email" class="form-control"
+																	id="emailrepetido" name="emailrepetido"
+																	onchange="verificaEmail()"
+																	value="<%= usuario.email %>">
+															</div>
+														</div>
+														<div class="form-group row">
+
+															<div class="col-sm-4">
+																Foto:
+																<input type="file" accept="image/*" name="photo"
+																	id="photo" class="form-control">
+															</div>
+															<div class="col-sm-4">
+																Órgão:
+																<select class="form-control" id="orgao"
+																	onchange="verificaOrgao()" name="orgao">
+																	<option value="">
+																		Selecione o órgão...</option>
+																	<% for (var i = 0; i < itensOrgaos.length; i++) { %>
+																	<% if (itensOrgaos[i].id != null ) { %>
+																	<option onselect="verificaOrgao()"
+																		<%= itensOrgaos[i].id === orgao.id ? 'selected' : '' %>
+																		value="<%- itensOrgaos[i].id %>">
+																		<%- itensOrgaos[i].sigla %>
+																	</option>
+																	<% } %>
+																	<% } %>
+																</select>
+															</div>
+															<div id="div_lotacao" class="col-sm-4">
+																Lotação / Setor*
+																<input required type="text" class="form-control"
+																	id="lotacao" name="lotacao" value="<%= lotacao %>">
+															</div>
+														</div>
+														<div class="form-group row">
+															<div id="div_cargo" class="col-sm-4">
+																Cargo*
+																<input type="text" required class="form-control"
+																	id="cargo" name="cargo" value="<%= cargo %>">
+															</div>
+															<div id="div_funcao" class="col-sm-4">
+																Função*
+																<input type="text" required class="form-control"
+																	id="funcao" name="funcao" value="<%= funcao %>">
+															</div>
+															<div id="div_area" class="col-sm-4">
+																Área de atuação*
+																<input type="text" required class="form-control"
+																	id="area" name="area" value="<%= area %>">
+															</div>
+														</div>
+														<div class="form-group row">
+
+															<div id="div_ID" class="col-sm-4">
+																ID
+																<input type="text" class="form-control" id="matricula"
+																	name="matricula" value="<%= matricula %>">
+															</div>
+															<div class="col-sm-4">
+																Chefe
+																<input type="text" class="form-control" id="chefe"
+																	name="chefe" value="<%= chefe %>">
+															</div>
+															<div class="col-sm-4">
+																Email Chefe
+																<input type="text" class="form-control" id="emailchefe"
+																	name="emailchefe" value="<%= emailchefe %>">
+															</div>
+														</div>
+														<ul value="deficiencias" class="list-unstyled"
+															id="deficiencias">
+															Deficiências
+															<% var f = 0 %>
+															<% for (var i = 0; i < deficiencia.length; i++) { %>
+															<% if (deficiencia[i] != null ) { %>
+															<div id="<%-'rowe'+f-%>">
+																<div class="row form-group">
+																	<div class="col-sm-4">
+																		<select required class="form-control"
+																			id="candidatoDeficiencia"
+																			name="candidatoDeficiencia">
+																			<option
+																				<%= deficiencia[i] === "" ? 'selected' : '' %>
+																				value="">Selecione...
+																			</option>
+																			<option
+																				<%= deficiencia[i] === "MOTORA_CADEIRANTE" ? 'selected' : '' %>
+																				value="MOTORA_CADEIRANTE">Motora /
+																				Cadeirante
+																			</option>
+																			<option
+																				<%= deficiencia[i] === "MOTORA_NAO_CADEIRANTE" ? 'selected' : '' %>
+																				value="MOTORA_NAO_CADEIRANTE">Motora /
+																				Não Cadeirante
+																			</option>
+																			<option
+																				<%= deficiencia[i] === "AUDITIVA" ? 'selected' : '' %>
+																				value="AUDITIVA">Auditiva
+																			</option>
+																			<option
+																				<%= deficiencia[i] === "MENTAL_INTELECTUAL" ? 'selected' : '' %>
+																				value="MENTAL_INTELECTUAL">
+																				Mental / Intelectual</option>
+																			<option
+																				<%= deficiencia[i] === "VISUAL" ? 'selected' : '' %>
+																				value="VISUAL">Visual
+																			</option>
+																		</select>
+																	</div>
+																	<div class="col-sm-2">
+
+																		<button id="<%- 'e'+f -%>" type="button"
+																			class="btn_remove btn btn-sm btn-danger">
+																			<i class="fas fa-times-circle mt-1"></i>
+																		</button>
+																	</div>
+																</div>
+															</div>
+															<% f++ %>
+															<% } %>
+															<% } %>
+														</ul>
+														<button id="btnAdd" type="button"
+															class="btn btn-sm btn-success mb-2">Adicionar
+															Deficiência</button>
+													</fieldset>
+													<fieldset
+														style="border: 1px groove #FFF !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important;">
+														<legend
+															style="width: auto; padding:0 10px; border-bottom:none;">
+															Endereço e Informações de Contato</legend>
+														<div class="form-group row">
+															<div class="col-sm-4">
+																Logradouro
+																<input type="text" class="form-control" id="logradouro"
+																	name="logradouro"
+																	value="<%= endereco.logradouro %>">
+															</div>
+															<div class="col-sm-4">
+																Número
+																<input type="text" class="form-control" id="numero"
+																	name="numero" value="<%= endereco.numero %>">
+															</div>
+															<div class="col-sm-4">
+																Complemento
+																<input type="text" class="form-control" id="complemento"
+																	name="complemento"
+																	value="<%= endereco.complemento %>">
+															</div>
+														</div>
+														<div class="form-group row">
+															<div class="col-sm-4">
+																Bairro
+																<input type="text" class="form-control" id="bairro"
+																	name="bairro" value="<%= endereco.bairro %>">
+															</div>
+															<div class="col-sm-4">
+																CEP
+																<input type="text" class="form-control" id="cep"
+																	name="cep" value="<%= endereco.cep %>">
+															</div>
+															<div class="col-sm-4">
+																Estado
+																<select class="form-control" required id="estado" name="estado"
+																	onchange="myFunction()">
+																	<option value="">Selecione o estado...</option>
+																	<% for (var i = 0; i < estados.length; i++) { %>
+																	<% if (estados[i].id != null ) { %>
+																	<option id="estadoid"
+																		<%= estados[i].id == endereco.municipio.estado.id ? 'selected' : '' %>
+																		value="<%- estados[i].id %>">
+																		<%- estados[i].nome %>
+																	</option>
+																	<% } %>
+																	<% } %>
+																</select>
+															</div>
+														</div>
+														<div class="form-group row">
+															<div class="col-sm-4">
+																Telefone Fixo
+																<input type="text" class="form-control" id="telefone"
+																	name="telefone" value="<%= telefone %>">
+															</div>
+															<div class="col-sm-4">
+																Telefone Celular
+																<input type="text" class="form-control" id="celular"
+																	name="celular" value="<%= celular %>">
+															</div>
+															<div class="col-sm-4">
+																Município
+																<select onload="myFunction()" required class="form-control"
+																	id="municipio" name="municipio">
+																	<option value="">Selecione o município...</option>
+																</select>
+															</div>
+														</div>
+														<input type="hidden" id="id" name="id" value="<%=id %>">
+														<input type="hidden" id="idUsuario" name="idUsuario"
+															value="<%=usuario.id %>">
+														<input type="hidden" id="idEndereco" name="idEndereco"
+															value="<%=endereco.id %>">
+														<input type="hidden" id="cpf" name="cpf" value="<%= cpf %>">
+														<input type="hidden" id="rg" name="rg" value="<%= rg %>">
+														<input type="hidden" id="dataCadastro" name="dataCadastro"
+															value="<%= dataCadastro %>">
+													</fieldset>
+													<a href="/app/candidato/list" class="btn btn-danger btn-sm">
+														Voltar
+													</a>
+													<button class="btn btn-sm btn-success"
+														style="float: right">Salvar</button>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /.container-fluid -->
+
+				</div>
+				<!-- End of Main Content -->
+
+				<!-- Rodapé -->
+				<%- include ../template/rodape.ejs %>
+
+			</div>
+			<!-- End of Content Wrapper -->
+
+		</div>
+		<!-- End of Page Wrapper -->
+
+		<!-- Scroll to Top Button-->
+		<a class="scroll-to-top rounded" href="#page-top">
+			<i class="fas fa-angle-up"></i>
+		</a>
+
+
+		<script>
+
+			$(document).ready(function () {
+				var i = 1;
+				$('#btnAdd').on('click', function () {
+					i++;
+					$('#deficiencias').append(
+						'<div id="row' + i + '" class="form-group row">' +
+						'<div class="col-sm-4">' +
+						'<select required class="form-control" ' +
+						'id="candidatoDeficiencia" name="candidatoDeficiencia">' +
+						'<option value="">Selecione...</option>' +
+						'<option value="MOTORA_CADEIRANTE">Motora / Cadeirante</option>' +
+						'<option value="MOTORA_NAO_CADEIRANTE">Motora / Não Cadeirante</option>' +
+						'<option value="AUDITIVA">Auditiva</option>' +
+						'<option value="MENTAL_INTELECTUAL">Mental / Intelectual</option>' +
+						'<option value="VISUAL">Visual</option>' +
+						'</select>' +
+						'</div>' +
+						'<div class="col-sm-2">' +
+						'<button id="' + i + '" type="button" class="btn btn-sm btn-danger btn_remove">' +
+						'<i class="fas fa-times-circle"></i>' +
+						'</button>' +
+						'</div>' +
+						'</div>');
+				});
+				$(document).on('click', '.btn_remove', function () {
+					var button_id = $(this).attr("id");
+					$('#row' + button_id + '').remove();
+				})
+			})
+
+		</script>
+		<!-- Bootstrap core JavaScript-->
+		<script src="/vendor/jquery/jquery.min.js"></script>
+		<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+		<!-- Core plugin JavaScript-->
+		<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+		<!-- Custom scripts for all pages-->
+		<script src="/js/sb-admin-2.min.js"></script>
+
+		<!-- Page level plugins -->
+		<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+		<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+		<!-- Page level custom scripts -->
+		<script src="/js/demo/datatables-demo.js"></script>
+
+	</body>
+
+</html>

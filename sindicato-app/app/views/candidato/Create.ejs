@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title><%- process.env.TITLE %></title>
+
+		<!-- Custom fonts for this template-->
+		<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+		<link
+			href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+			rel="stylesheet">
+
+		<!-- Custom styles for this template-->
+		<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+
+		<script>
+
+			function verificaOrgao() {
+				var orgao = $('#orgao').val();
+				// ID DO ORGAO 'OUTRO' = 172
+				if (orgao === '172') {
+					$("#div_chefe").hide();
+					$("#chefe").removeAttr("required");
+					$("#email_chefe").removeAttr("required");
+					$("#chefe").val("");
+					$("#email_chefe").val("");
+					$("#div_lotacao").hide();					
+					$("#lotacao").removeAttr("required");				
+					$("#lotacao").val("");
+					$("#div_cargo").hide();
+					$("#cargo").removeAttr("required");
+					$("#cargo").val("");
+					$("#div_funcao").hide();
+					$("#funcao").removeAttr("required");
+					$("#funcao").val("");
+					$("#div_area").hide();
+					$("#area").removeAttr("required");
+					$("#area").val("");
+					$("#div_ID").hide();
+					$("#matricula").removeAttr("required");
+					$("#matricula").val("");
+				}else {
+					$("#div_chefe").show();
+					$("#chefe").attr("required", "required");
+					$("#email_chefe").attr("required", "required");								
+					$("#div_lotacao").show();					
+					$("#lotacao").attr("required", "required");
+					$("#div_cargo").show();
+					$("#cargo").attr("required", "required");
+					$("#div_funcao").show();
+					$("#funcao").attr("required", "required");
+					$("#div_area").show();
+					$("#area").attr("required", "required");
+					$("#div_ID").show();
+					$("#matricula").attr("required", "required");
+				}
+
+			}
+
+			function getMunicipios() {
+				var estadoId = $('#estado').val();
+				$('#municipio').empty()
+				$.ajax({
+					type: "GET",
+					url: "/app/instituicao/municipio/" + estadoId,
+					success: function (data) {
+						$.each(data, function (i, d) {
+							$('#municipio').append('<option value="' + d.id + '">' + d.nome + '</option>');
+						});
+					}
+				})
+			}
+			 function verificaEmail() {
+				var email = $('#email').val();
+				var emailrepetido = $('#emailrepetido').val();
+				if (emailrepetido != email) {
+					alert('Emails não correspondem.');
+				}
+			} 
+
+			function verificaSenha() {
+				var senha = $('#password').val();
+				var senharepetida = $('#passwordrepetido').val();
+				if (senharepetida != senha) {
+					alert('Senhas não correspondem.')
+				}
+			}
+
+			$('#cpf').mask('000.000.000-00');
+			$('#celular').mask('(00) 00000-0000');
+			$('#fone').mask('(00) 0000-0000');
+
+
+			function myFunction() {
+				var modalidade = $('#modalidade').val();
+				var selectCourse = document.getElementById('div_deficiencias');
+
+				if (modalidade == 'false') {
+					selectCourse.style.visibility = 'hidden';
+					$('#candidatoDeficiencia').val('');
+				} else {
+					selectCourse.style.visibility = 'visible';
+				}
+			}
+		</script>
+
+	</head>
+
+	<body class="bg-gradient-ligth" onload="verificaOrgao()">
+
+		<div class="container">
+
+			<!-- Outer Row -->
+			<div class="row justify-content-center mt-5">
+
+				<div class="col-xl-12 col-lg-12 col-md-9">
+
+					<%- messages() %>
+					<div class="card o-hidden border-0 shadow-lg my-6">
+						<div class="card-body p-0">
+							<!-- Nested Row within Card Body -->
+							<div class="row">
+								<!--<div class="col-lg-6 d-none d-lg-block"
+								style="background-image: url('/img/logo.png');background-repeat: no-repeat;background-position: center;background-size: 400px;background-color:#f4c430">
+							</div>-->
+								<div class="col-lg-12">
+									<div class="p-5">
+										<div class="text-center">
+											<img src="/img/egma_segep_b.svg" width="35%"><br /><br />
+											<h1 class="h4 text-gray-900 mb-4">Cadastro</h1>
+										</div>
+										<form class="user" id="user" method="POST" action="/app/candidato/create/submit"
+											enctype="multipart/form-data">
+											<fieldset
+												style="border: 1px groove #FFF !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important;">
+												<legend style="width: auto; padding:0 10px; border-bottom:none;">
+													Informações Gerais</legend>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Nome: *
+														<input type="text" class="form-control" id="nome" name="nome"
+															required>
+													</div>
+													<div class="col-sm-4">
+														Nome Social:
+														<!-- <small>(Nome pelo qual você deseja ser conhecido nesta comunidade)</small> -->
+														<input type="text" class="form-control" id="nomesocial"
+															name="nomesocial"
+															title="Nome pelo qual você deseja ser conhecido nesta comunidade">
+													</div>
+													<div class="col-sm-4">
+														Sexo: *
+														<select name="sexo" id="sexo" class="form-control" required>
+															<option value="Feminino">Feminino</option>
+															<option value="Masculino">Masculino</option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Data de nascimento: *
+														<input type="date" class="form-control" id="datanascimento"
+															name="datanascimento" required>
+													</div>
+													<div class="col-sm-4">
+														Formação:
+														<select class="form-control" name="formacao" id="formacao">
+															<option value="ENSINO_MEDIO">Ensino Médio</option>
+															<option value="SUPERIOR_INCOMPLETO">Superior Incompleto
+															</option>
+															<option value="SUPERIOR_COMPLETO">Superior Completo</option>
+															<option value="POS_GRADUACAO">Pós Graduação</option>
+															<option value="MESTRADO">Mestrado</option>
+															<option value="DOUTORADO">Doutorado</option>
+														</select>
+													</div>
+													<div class="col-sm-4">
+														RG:
+														<input type="text" class="form-control" id="rg" name="rg">
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														CPF: *
+														<input type="text" class="form-control" id="cpf" name="cpf"
+															required>
+													</div>
+													<div class="col-sm-4">
+														Email *
+														<input type="email" class="form-control" id="email" name="email"
+															required>
+													</div>
+													<div class="col-sm-4">
+														Repetir email: *
+														<input type="email" class="form-control" id="emailrepetido"
+															name="emailrepetido" onchange="verificaEmail()" required>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Foto:
+														<input type="file" accept="image/*" name="photo" id="photo"
+															class="form-control">
+													</div>
+													<div class="col-sm-4">
+														Senha: <small>(min. 6 caracteres)</small> *
+														<input type="password" name="password" id="password"
+															class="form-control" pattern=".{6,}" required
+															title="Mínimo de 6 caracteres">
+													</div>
+													<div class="col-sm-4">
+														Repetir senha: *
+														<input type="password" name="passwordrepetido"
+															id="passwordrepetido" class="form-control" pattern=".{6,}"
+															onchange="verificaSenha()" required>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Órgão: *
+														<select class="form-control" id="orgao" name="orgao"
+															onchange="verificaOrgao()" required>
+															<option value="">Selecione o órgão...</option>
+															<% for (var i = 0; i < itensOrgaos.length; i++) { %>
+															<% if (itensOrgaos[i].id != null ) { %>
+															<option value="<%- itensOrgaos[i].id %>"
+																<%= itensOrgaos[i].id === 172 ? 'selected' : '' %>>
+																<%- itensOrgaos[i].sigla %>
+															</option>
+															<% } %>
+															<% } %>
+														</select>
+													</div>
+													<div id="div_lotacao" class="col-sm-4">
+														Lotação / Setor: *
+														<input type="text" class="form-control" id="lotacao"
+															name="lotacao" required>
+													</div>
+													<div id="div_cargo" class="col-sm-4">
+														Cargo: *
+														<input type="text" class="form-control" id="cargo" name="cargo"
+															required>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div id="div_funcao" class="col-sm-4">
+														Função:
+														<input type="text" class="form-control" id="funcao"
+															name="funcao">
+													</div>
+													<div id="div_area" class="col-sm-4">
+														Área de atuação: *
+														<input type="text" class="form-control" id="area" name="area"
+															required>
+													</div>
+													<div id="div_ID" class="col-sm-4">
+														ID:
+														<input type="text" class="form-control" id="matricula"
+															name="matricula">
+													</div>
+												</div>
+												<div id="div_chefe" class="form-group row">
+													<div class="col-sm-4">
+														Nome do chefe imediato: *
+														<input type="text" class="form-control" id="chefe" name="chefe"
+															required>
+													</div>
+
+													<div class="col-sm-8">
+														Email do chefe imediato: *
+														<input type="text" class="form-control" id="email_chefe"
+															name="emailchefe" required>
+													</div>
+
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-3">
+														Possui Deficiência
+														<select class="form-control" id="modalidade" name="modalidade"
+															onchange="myFunction()">
+															<option value="false">Não</option>
+															<option value="true">Sim</option>
+														</select>
+													</div>
+												</div>
+
+												<div id="div_deficiencias" style="visibility: hidden">
+													<ul value="deficiencias" class="list-unstyled" id="deficiencias">
+														<li id="deficiencias">
+															<div class="form-group">
+																<div class="row">
+																	<div class="col-sm-4">
+																		Deficiências
+																		<select class="form-control"
+																			id="candidatoDeficiencia"
+																			name="candidatoDeficiencia">
+																			<option value="">Selecione...</option>
+																			<option value="MOTORA_CADEIRANTE">Motora /
+																				Cadeirante</option>
+																			<option value="MOTORA_NAO_CADEIRANTE">Motora
+																				/ Não Cadeirante</option>
+																			<option value="AUDITIVA">Auditiva</option>
+																			<option value="MENTAL_INTELECTUAL">Mental /
+																				Intelectual</option>
+																			<option value="VISUAL">Visual</option>
+																		</select>
+																	</div>
+																	<div class="col-sm-2">
+																		<br />
+																		<button id="btnAddDeficiencia" type="button"
+																			class="btn btn-sm btn-success mt-1"><i
+																				class="fa fa-plus"></i>
+																		</button>
+																	</div>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</div>
+												<br />
+
+
+											</fieldset>
+											<fieldset
+												style="border: 1px groove #FFF !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important;">
+												<legend style="width: auto; padding:0 10px; border-bottom:none;">
+													Endereço</legend>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Logradouro: *
+														<input type="text" class="form-control" id="logradouro"
+															name="logradouro" required>
+													</div>
+													<div class="col-sm-4">
+														Número: *
+														<input type="text" class="form-control" id="numero"
+															name="numero" required>
+													</div>
+													<div class="col-sm-4">
+														Complemento:
+														<input type="text" class="form-control" id="complemento"
+															name="complemento">
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Bairro:
+														<input type="text" class="form-control" id="bairro"
+															name="bairro">
+													</div>
+													<div class="col-sm-4">
+														CEP:
+														<input type="text" class="form-control" id="cep" name="cep">
+													</div>
+													<div class="col-sm-4">
+														Estado:
+														<select class="form-control" id="estado" name="estado"
+															onchange="getMunicipios()">
+															<option value="">Selecione o estado...</option>
+															<% for (var i = 0; i < itensEstados.length; i++) { %>
+															<% if (itensEstados[i].id != null ) { %>
+															<option id="estadoid" value="<%- itensEstados[i].id %>">
+																<%- itensEstados[i].nome %>
+															</option>
+															<% } %>
+															<% } %>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Telefone fixo:
+														<input type="text" class="form-control" id="fone" name="fone">
+													</div>
+													<div class="col-sm-4">
+														Celular: *
+														<input type="text" class="form-control" id="celular"
+															name="celular" required>
+													</div>
+													<div class="col-sm-4">
+														Município:
+														<select class="form-control" id="municipio" name="municipio">
+															<option value="1">Selecione o município...</option>
+														</select>
+													</div>
+												</div>
+											</fieldset>
+
+											<div class="form-group row" style="margin-top: 5%">
+												<div class="col-sm-4">
+													<input type="submit" value="Cadastrar"
+														class="btn btn-primary btn-block" style="width: 100%;">
+												</div>
+												<div class="col-sm-4">
+													<a href="/" class="btn btn-facebook btn-block">
+														Voltar
+													</a>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<script>
+			$(function () {
+				var scntDiv = $('#div_deficiencias');
+				var i = $('#div_deficiencias li').length + 1;
+
+				$('#btnAddDeficiencia').on('click', function () {
+					$(
+						'<div id="addDeficiencia" class="row">' +
+						'<div class="col-sm-4">' +
+						'<select required class="form-control"' +
+						'id="candidatoDeficiencia" name="candidatoDeficiencia">' +
+						'<option value="">Selecione...</option>' +
+						'<option value="MOTORA_CADEIRANTE">Motora / Cadeirante</option>' +
+						'<option value="MOTORA_NAO_CADEIRANTE">Motora / Não Cadeirante</option>' +
+						'<option value="AUDITIVA">Auditiva</option>' +
+						'<option value="MENTAL_INTELECTUAL">Mental / Intelectual</option>' +
+						'<option value="VISUAL">Visual</option>' +
+						'</select>' +
+						'</div>' +
+						'<div class="col-sm-1 mb-4">' +
+						'<button id="btnRemDeficiencia" type="button" class="btn btn-sm btn-danger">' +
+						'<i class="fas fa-times-circle"></i>' +
+						'</button>' +
+						'</div>' +
+						'</div>'
+					).appendTo(scntDiv);
+					i++;
+					return false;
+				});
+
+				$(document).on('click', '#btnRemDeficiencia', function () {
+					if (i > 2) {
+						$('#addDeficiencia').remove();
+						i--;
+					}
+					return false;
+				});
+			});
+		</script>
+
+		<!-- Bootstrap core JavaScript-->
+		<script src="/vendor/jquery/jquery.min.js"></script>
+		<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+		<!-- Core plugin JavaScript-->
+		<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+		<!-- Custom scripts for all pages-->
+		<script src="/js/sb-admin-2.min.js"></script>
+
+	</body>
+
+</html>

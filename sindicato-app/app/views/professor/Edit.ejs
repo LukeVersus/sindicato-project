@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title><%- process.env.TITLE %></title>
+
+	<!-- Custom fonts for this template-->
+	<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+	<link
+		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+		rel="stylesheet">
+
+	<!-- Custom styles for this template-->
+	<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+	<!-- Custom styles for this page -->
+	<link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+
+	<script>
+		var limit = 8;
+		var limit2;
+
+		function openPdf(pdfbase64, nome) {
+
+			//var documento = 'data:application/pdf;base64,' + pdfbase64;
+			let pdfWindow = window.open("");
+			pdfWindow.document.write("<object width='100%' height='100%' type='application/pdf' data='data:application/pdf;base64, " + pdfbase64 + "'></object>");
+			pdfWindow.document.title = nome;
+		}
+
+		function limitCurso() {
+			document.getElementById("curso1").removeAttribute("disabled");
+			var curso0 = $('#curso0').val();
+			if ($('#curso1').val().length == limit2) {
+				$('#curso1').value = $('#curso1').val()-1;
+			}
+			if (curso0.length === limit) {
+				document.getElementById("curso1").setAttribute("disabled", "disabled");
+			}
+			limit2 = limit - curso0.length;
+			
+		}
+
+		function limitCurso1() {		
+			var curso1 = $('#curso1').val();
+			if (curso1.length == limit2) {
+				document.getElementById("curso1").setAttribute("disabled", "disabled");
+			}
+		}
+		function getCursos(numero) {
+			var categoria0 = $('#categoria0').val();
+			var categoria1 = document.getElementById("categoria1");
+			if (numero == '0') {
+				$('#categoria1').empty();
+				$('#curso1').empty();
+				$('#categoria1').append('<option value="">Selecione...</option>');
+				<% areasInteresse.forEach(function(dat) { %>	 				
+					$('#categoria1').append('<option value="<%= dat.id %>"><%= dat.nome %></option>');
+				<% }); %>
+			}
+			for(var i = 0; i < categoria1.length; i++) {
+				if (categoria1.options[i].value == categoria0) {
+					categoria1.remove(i);
+				}
+			}
+			var categoriad = '#categoria' + numero;
+			var categoriaId = $(categoriad).val();
+			var idcurso = '#curso' + numero;
+			$(idcurso).empty()
+			$.ajax({
+				type: "GET",
+				url: "/app/professor/categoria/" + categoriaId,
+				success: function (data) {
+					$.each(data, function (i, d) {
+						console.log(d.id);
+						
+						$(idcurso).append('<option class="checkbox" value="' + d.id + '">' + d.nome + '</option>');
+					});
+				}
+			})
+		}
+
+	</script>
+
+
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Menu -->
+		<%- include ../template/menu.ejs %>
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Header -->
+				<%- include ../template/topo.ejs %>
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<h1 class="h3 mb-4 text-gray-800">Editar Credenciamento</h1>
+
+					<div class="row">
+
+						<!-- Earnings (Monthly) Card Example -->
+						<div class="col-xl-12 col-md-12 mb-4">
+							<div class="card border-left-primary shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<div class="col mr-2">
+											<form class="user" method="POST" action="/app/<%= page %>/edit/submit"
+												enctype="multipart/form-data">
+
+												<h2>Informações</h2>
+												<br />
+												<div class="form-group row">
+													<div class="col-sm-3">
+														PIS
+														<input type="text" class="form-control" id="pis" name="pis"
+															value="<%= pis %>">
+													</div>
+													<div class="col-sm-3">
+														PASEP
+														<input type="text" class="form-control" id="pasep" name="pasep"
+															value="<%= pasep %>">
+													</div>
+													<div class="col-sm-2">
+														INSS
+														<input type="text" class="form-control" id="inss" name="inss"
+															value="<%= inss %>">
+													</div>
+													<div class="col-sm-2">
+														Estado Civil
+														<select required class="form-control" name="estadocivil"
+															id="estadocivil">
+															<option <%- estadocivil === '' ? 'selected' : '' %>
+																value="">Selecione</option>
+															<option <%- estadocivil === 'SOLTEIRO' ? 'selected' : '' %>
+																value="SOLTEIRO">Solteiro
+															</option>
+															<option <%- estadocivil === 'CASADO' ? 'selected' : '' %>
+																value="CASADO">Casado</option>
+															<option
+																<%- estadocivil === 'UNIAO_ESTAVEL' ? 'selected' : '' %>
+																value="UNIAO_ESTAVEL">União Estável
+															</option>
+															<option
+																<%- estadocivil === 'DIVORCIADO' ? 'selected' : '' %>
+																value="DIVORCIADO">Divorciado</option>
+															<option <%- estadocivil === 'VIUVO' ? 'selected' : '' %>
+																value="VIUVO">Viúvo</option>
+															<option <%- estadocivil === 'SEPARADO' ? 'selected' : '' %>
+																value="SEPARADO">Separado</option>
+														</select>
+													</div>
+												</div>
+												<div id="div_interesses">
+												<% var f = 0 %>
+												<ul value="interesses" class="list-unstyled" id="interesses">
+
+													<div id="<%-'rowe'+f-%>">
+
+														<li id="liInteresse">
+
+															<div class="row">
+																<div class="col-sm-4">
+																	Área de Interesse 1
+																	<select class="form-control" id="categoria0"
+																		name="categoria" onchange="getCursos('0')">
+																		<option value="">Selecione...</option>
+																		<% for (var i = 0; i < categorias.length; i++) { %>
+																		<% if (categorias[i] != null ) { %>
+																		<option id="categoriaId"
+																			<%= categorias[i].id == interesses[0].categoria.id ? 'selected' : '' %>
+																			value="<%- categorias[i].id %>">
+																			<%- categorias[i].nome %>
+																		</option>
+																		<% } %>
+																		<% } %>
+																	</select>
+																</div>
+																<div class="col-sm-4">
+																	Subárea de Interesse 1
+																	<select multiple class="form-control" id="curso0"
+																		name="curso">
+																		<% interesses[0].curso.forEach(function(icurso) { %>
+																			<option value="<%= icurso.id %>" selected>
+																				<%= icurso.nome %></option>
+																		<% }) %>
+																	</select>
+																</div>
+															</div>
+															<div class="row">
+																	<div class="col-sm-4">
+																		Área de Interesse 2
+																		<select class="form-control" id="categoria1"
+																			name="categoria1" onchange="getCursos('1')">
+																			<option value="">Selecione...</option>
+																			<% for (var i = 0; i < categorias.length; i++) { %>
+																			<% if (categorias[i].id != null ) { %>
+																			<option id="categoriaId"
+																				<%= categorias[i].id == interesses[1].categoria.id ? 'selected' : '' %>
+																				value="<%- categorias[i].id %>">
+																				<%- categorias[i].nome %>
+																			</option>
+																			<% } %>
+																			<% } %>
+																		</select>
+																	</div>
+																	<div class="col-sm-4">
+																		Subárea de Interesse 2
+																		<select multiple class="form-control" id="curso1"
+																			name="curso1">
+																			<% interesses[1].curso.forEach(function(icurso) { %>
+																				<option value="<%= icurso.id %>" selected>
+																					<%= icurso.nome %></option>
+																			<% }) %>
+																		</select>
+																	</div>
+																</div>
+
+														</li>
+
+													</div>
+													<% f++ %>
+												</ul>
+												</div>
+												<br />
+												<br />
+												<div class="form-group row">
+													<div class="col-sm-4">
+														Documentos<br />
+														<input class="form-control" type="file" name="documento"
+															id="documento" accept="application/pdf" multiple="multiple">
+														<% for (var i = 0; i < documentos.length; i++) { %>
+														<a href="#" data-toggle="tooltip" data-placement="top"
+															title="<%= documentos[i].nome %>" class="btn-sm"
+															onclick="openPdf('<%= documentos[i].documento %>', '<%= documentos[i].nome %>')">
+															<i
+																class="fas fa-file-pdf "></i><%= documentos[i].nome %><br />
+														</a>
+														<% } %>
+													</div>
+												</div>
+												<br />
+												<br />
+												<h2>Formações</h2>
+												<% var f = 0 %>
+												<ul value="formacoes" class="list-unstyled" id="formacoes">
+													<% formacoes.forEach(function (formacao){ %>
+
+													<div id="<%-'rowe'+f-%>">
+
+														<li id="liFormacao">
+
+															<div class="row">
+																<div class="col-sm-3">
+																	Formação
+																	<select required class="form-control"
+																		name="tpFormacao" id="tpFormacao">
+																		<option
+																			<%- formacao.tpFormacao === 'ENSINO_MEDIO' ? 'selected' : '' %>
+																			value="ENSINO_MEDIO">Ensino Médio
+																		</option>
+																		<option
+																			<%- formacao.tpFormacao === 'SUPERIOR_INCOMPLETO' ? 'selected' : '' %>
+																			value="SUPERIOR_INCOMPLETO">Superior
+																			Incompleto</option>
+																		<option
+																			<%- formacao.tpFormacao === 'SUPERIOR_COMPLETO' ? 'selected' : '' %>
+																			value="SUPERIOR_COMPLETO">Superior
+																			Completo</option>
+																		<option
+																			<%- formacao.tpFormacao === 'POS_GRADUACAO' ? 'selected' : '' %>
+																			value="POS_GRADUACAO">Pós Graduação
+																		</option>
+																		<option
+																			<%- formacao.tpFormacao === 'MESTRADO' ? 'selected' : '' %>
+																			value="MESTRADO">Mestrado</option>
+																		<option
+																			<%- formacao.tpFormacao === 'DOUTORADO' ? 'selected' : '' %>
+																			value="DOUTORADO">Doutorado</option>
+																	</select>
+																</div>
+																<div class="col-sm-3">
+																	Instituição
+																	<input type="text" class="form-control"
+																		id="instituicao" name="instituicao"
+																		value="<%= formacao.instituicao %>">
+
+																</div>
+																<div class="col-sm-2">
+																	Curso
+																	<input required type="text" class="form-control"
+																		id="cursoInstituicao" name="cursoInstituicao"
+																		value="<%= formacao.curso %>">
+																</div>
+																<div class="col-sm-2">
+																	Ano
+																	<input required type="number" class="form-control"
+																		id="ano" name="ano" value="<%= formacao.ano %>">
+																</div>
+																<div class="col-sm-2">
+																	<br />
+
+																	<button id="<%- 'e'+f -%>" type="button"
+																		class="btn_remove btn btn-sm btn-danger">
+																		<i class="fas fa-times-circle"></i>
+																	</button>
+																</div>
+															</div>
+
+														</li>
+
+													</div>
+													<% f++ %>
+													<%})%>
+												</ul>
+												<button id="btnAdd" type="button"
+													class="btn btn-sm btn-success mb-2">Adicionar Formação</button>
+
+												<br />
+												<br />
+												<h2>Experiências</h2>
+
+												<ul value="experiencias" class="list-unstyled" id="experiencias">
+													<% var f = 0 %>
+													<% experiencias.forEach(function (experiencia){ %>
+
+													<div id="<%-'rowex'+f-%>">
+
+														<li id="liExperiencia">
+
+															<div class="row">
+																<div class="col-sm-2">
+																	Curso
+																	<input required type="text" class="form-control"
+																		id="experienciaCurso" name="experienciaCurso"
+																		value="<%= experiencia.curso %>">
+																</div>
+																<div class="col-sm-1">
+																	Carga Horária
+																	<input required type="number" class="form-control"
+																		id="experienciaCargaHoraria"
+																		name="experienciaCargaHoraria"
+																		value="<%= experiencia.cargaHoraria %>">
+																</div>
+
+																<div class="col-sm-3">
+																	Instituição
+																	<input type="text" class="form-control"
+																		id="experienciaInstituicao"
+																		name="experienciaInstituicao"
+																		value="<%= experiencia.instituicao %>">
+																</div>
+
+																<div class="col-sm-2">
+																	Inicio
+																	<input required type="date" class="form-control"
+																		id="dataInicio" name="dataInicio"
+																		value="<%= experiencia.dataInicio %>">
+																</div>
+																<div class="col-sm-2">
+																	Fim
+																	<input required type="date" class="form-control"
+																		id="dataFim" name="dataFim"
+																		value="<%= experiencia.dataFim %>">
+																</div>
+																<div class="col-sm-1">
+																	<br />
+
+																	<button id="<%- 'ex'+f -%>" type="button"
+																		class="btn_remove btn btn-sm btn-danger">
+																		<i class="fas fa-times-circle"></i>
+																	</button>
+																</div>
+
+
+															</div>
+
+														</li>
+
+
+													</div>
+													<% f++ %>
+													<%})%>
+
+												</ul>
+												<button id="btnAddExperiencia" type="button"
+													class="btn btn-sm btn-success mb-2">Adicionar
+													Experiência</button>
+
+												<br />
+												<br />
+												<div class="form-group row">
+													<div class="col-sm-4">
+														<input type="submit" value="Salvar"
+															class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" />
+														<a href="/app/<%= page %>/list"
+															class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm">Cancelar</a>
+													</div>
+												</div>
+												<input type="hidden" id="id" name="id" value="<%= id %>">
+												<input type="hidden" id="statusDeferimento" name="statusDeferimento"
+													value="<%= statusDeferimento %>">
+												<input type="hidden" id="pontuacao" name="pontuacao"
+													value="<%= pontuacao %>">
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- End of Main Content -->
+			<!-- Rodapé -->
+			<%- include ../template/rodape.ejs %>
+		</div>
+		<!-- End of Content Wrapper -->
+	</div>
+	<!-- End of Page Wrapper -->
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top">
+		<i class="fas fa-angle-up"></i>
+	</a>
+
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Core plugin JavaScript-->
+	<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script src="/js/sb-admin-2.min.js"></script>
+
+	<!-- Page level plugins -->
+	<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+	<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+	<!-- Page level custom scripts -->
+	<script src="/js/demo/datatables-demo.js"></script>
+	<script>
+
+		$(document).ready(function () {
+			var i = 1;
+			$('#btnAdd').on('click', function () {
+				i++;
+				$('#formacoes').append('<div id="row' + i + '" class="row">' +
+					'<div class="col-sm-3">' +
+					'Formação' +
+					'	<select required class="form-control" name="tpFormacao"' +
+					'id="tpFormacao">' +
+					'<option value="">Selecione</option>' +
+					'<option value="ENSINO_MEDIO">Ensino Médio</option>' +
+					'<option value="SUPERIOR_INCOMPLETO">Superior Incompleto</option>' +
+					'<option value="SUPERIOR_COMPLETO">SuperiorCompleto</option>' +
+					'<option value="POS_GRADUACAO">Pós Graduação</option>' +
+					'<option value="MESTRADO">Mestrado</option>' +
+					'<option value="DOUTORADO">Doutorado</option> </select> </div>' +
+					'<div class="col-sm-3">' +
+					'Instituição' +
+					'	<input required type="text" class="form-control" id="instituicao" name="instituicao">' +
+					'</div>' +
+					'<div class="col-sm-2">Curso<input required type="text" class="form-control"' +
+					'id="cursoInstituicao" name="cursoInstituicao"></div>' +
+					'<div class="col-sm-2">Ano<input required type="number"' +
+					'class="form-control" id="ano" name="ano"></div>' +
+					'<div class="col-sm-1"><br/>' +
+					'<button id="' + i + '" type="button" class="btn btn-sm btn-danger btn_remove">' +
+					'<i class="fas fa-times-circle"></i>' +
+					'</button>'
+					+ '</div>' +
+					'</div>');
+			});
+			$(document).on('click', '.btn_remove', function () {
+				var button_id = $(this).attr("id");
+				$('#row' + button_id + '').remove();
+			})
+		})
+
+	</script>
+	<script>
+
+		$(document).ready(function () {
+			var i = 1;
+			$('#btnAddExperiencia').on('click', function () {
+				i++;
+				$('#experiencias').append('<div id="rowex' + i + '" class="row">' +
+					'<div class="col-sm-2">' +
+					'Curso' +
+					'	<input required type="text" class="form-control" id="experienciaCurso" name="experienciaCurso">' +
+					'</div>' +
+					'<div class="col-sm-1">Carga Horária<input required type="number" class="form-control"' +
+					'id="experienciaCargaHoraria" name="experienciaCargaHoraria"></div>' +
+					'<div class="col-sm-3">' +
+					'Instituição' +
+					'	<input required type="text" class="form-control" id="experienciaInstituicao" name="experienciaInstituicao">' +
+					'</div>' +
+					'<div class="col-sm-2">Inicio<input required type="date" class="form-control"' +
+					'id="experienciaInicio" name="experienciaInicio"></div>' +
+					'<div class="col-sm-2">Fim<input required type="date"' +
+					'class="form-control" id="experienciaFim" name="experienciaFim"></div>' +
+					'<div class="col-sm-1"><br/>' +
+					'<button id="ex' + i + '" type="button" class="btn btn-sm btn-danger btn_remove">' +
+					'<i class="fas fa-times-circle"></i>' +
+					'</button>'
+					+ '</div>' +
+					'</div>');
+			});
+			$(document).on('click', '.btn_remove', function () {
+				var button_id = $(this).attr("id");
+				$('#row' + button_id + '').remove();
+			})
+		})
+
+	</script>
+
+</body>
+
+</html>
