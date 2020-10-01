@@ -23,6 +23,7 @@ import br.gov.ma.seati.sindicato.enums.TpEscolaridadeEnum;
 import br.gov.ma.seati.sindicato.enums.TpEstadoCivilEnum;
 import br.gov.ma.seati.sindicato.enums.TpRedeEnsinoEnum;
 import br.gov.ma.seati.sindicato.enums.TurnoEnum;
+import br.gov.ma.seati.sindicato.enums.StatusEnum;
 
 @Entity
 @Table(name = "associado", schema = "sindicato")
@@ -105,6 +106,10 @@ public class Associado {
 	@Enumerated(EnumType.STRING)
 	@JoinColumn(name = "faixaSalario")
 	private FaixaSalarioEnum faixaSalario;
+	
+	@Enumerated(EnumType.STRING)
+	@JoinColumn(name = "status")
+	private StatusEnum status;
 
 	@ManyToOne
 	@JoinColumn(name = "escola_id")
@@ -318,6 +323,14 @@ public class Associado {
 
 	public void setTpEscolaridade(TpEscolaridadeEnum tpEscolaridade) {
 		this.tpEscolaridade = tpEscolaridade;
+	}
+	
+	public StatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusEnum status) {
+		this.status = status;
 	}
 
 	public Municipio getMunicipio_lotacao() {
