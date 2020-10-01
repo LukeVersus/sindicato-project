@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: pousada
+  main:
+    banner-mode: "off"
+  jpa:
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        id:
+          new_generator_mappings: true
+        temp:
+          use_jdbc_metadata_defaults: false
+  datasource:
+    #url: jdbc:postgresql://191.252.220.215:15432/sindicato
+    url: jdbc:postgresql://localhost:5432/sindicato
+    username: postgres
+    password: 80lvcr58
+    #password: nxj1303
+    #password: Camila200712
+    driver-class-name: org.postgresql.Driver
+    #initialization-mode: always
+
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
+server:
+  port: 1303
+
+
+  
+
