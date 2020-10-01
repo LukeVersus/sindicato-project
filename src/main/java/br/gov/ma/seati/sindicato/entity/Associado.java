@@ -53,6 +53,8 @@ public class Associado {
 	
 	private String celular;
 	
+	private Boolean validacao;
+
 	@OneToOne
 	private Usuario usuario;
 	
@@ -332,6 +334,14 @@ public class Associado {
 
 	public void setEscola(Escola escola) {
 		this.escola = escola;
+	}
+	
+	public Boolean isValidacao() {
+		return validacao;
+	}
+
+	public void setValidacao(Boolean validacao) {
+		this.validacao = validacao;
 	}
 
 	public Usuario getUsuario() {

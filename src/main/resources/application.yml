@@ -17,9 +17,9 @@ spring:
           use_jdbc_metadata_defaults: false
   datasource:
     #url: jdbc:postgresql://191.252.220.215:15432/sindicato
-    url: jdbc:postgresql://191.252.38.220:5432/sindicato
+    url: jdbc:postgresql://localhost:5432/sindicato
     username: postgres
-    password: Postgres2018!
+    password: 80lvcr58
     #password: nxj1303
     #password: Camila200712
     driver-class-name: org.postgresql.Driver
