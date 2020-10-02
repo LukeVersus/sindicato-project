@@ -38,9 +38,7 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, UsuarioRepos
 			throw new CustomException("ID de Usuário (" + usuario.getId() + ") já utilizado.", HttpStatus.BAD_REQUEST);
 		if (usuarioRepository.existsByUsername(usuario.getUsername()))
 			throw new CustomException("O usuário já existe.", HttpStatus.BAD_REQUEST);
-		Associado associado = associadoRepository.findByCpf(usuario.getUsername());
-		associado.setUsuario(usuario);
-		associadoRepository.save(associado);
+		usuario.setUsername(usuario.getUsername());
 		usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 		return usuarioRepository.save(usuario);
 	}
