@@ -15,6 +15,7 @@ public interface AssociadoRepository extends JpaRepository<Associado, Long>{
 	
 	boolean existsById(Long id);
 	boolean existsByCpf(String cpf);
+	boolean existsByStatus(String status);
 	Associado save(Associado associado);
 	
 	Optional<Associado> findById(Long id);
@@ -22,6 +23,10 @@ public interface AssociadoRepository extends JpaRepository<Associado, Long>{
 	List<Associado> findAll();
 
 	Page<Associado> findAll(Pageable pageable);
+	
+	List<Associado> findByStatus(String status);
+
+	Page<Associado> findByStatus(Pageable pageable);
 	
 	@Query()
 	Page<Associado> findByCpf(Pageable pageable, String cpf);

@@ -86,6 +86,15 @@ public class AssociadoResource extends GenericResource<Associado, AssociadoServi
 		response.setData(associadoService.findByCpf(cpf));
 		return ResponseEntity.ok(response);
 	}
+	
+	@GetMapping(value = "status/{status}")
+	public ResponseEntity<Response<Associado>> findByStatus(
+			@PathVariable String status,
+			@RequestHeader(name = "Authorization", required = false) String token) {
+		Response<Associado> response = new Response<>();
+		response.setData((Associado) associadoService.findByStatus(status));
+		return ResponseEntity.ok(response);
+	}
 
 
 }

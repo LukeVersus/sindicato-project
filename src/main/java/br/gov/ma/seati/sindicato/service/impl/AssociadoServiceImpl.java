@@ -1,5 +1,7 @@
 package br.gov.ma.seati.sindicato.service.impl;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -63,6 +65,10 @@ public class AssociadoServiceImpl extends GenericServiceImpl<Associado, Associad
 	
 	public Associado findByCpf(String cpf) {
 		return associadoRepository.findByCpf(cpf);
+	}
+	
+	public List<Associado> findByStatus(String status) {
+		return associadoRepository.findByStatus(status);
 	}
 
 
