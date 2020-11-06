@@ -1,7 +1,11 @@
 package br.gov.ma.seati.sindicato.resource;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -66,7 +70,7 @@ public class AssociadoResource extends GenericResource<Associado, AssociadoServi
 		return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping(value = "{page}/{cpf}/{size}")
+	@GetMapping(value = "associado/{page}/{cpf}/{size}")
 	public ResponseEntity<Response<Page<Associado>>> buscaCandidato(
 			@PathVariable int page,
 			@PathVariable String cpf,			 
@@ -93,6 +97,17 @@ public class AssociadoResource extends GenericResource<Associado, AssociadoServi
 			@RequestHeader(name = "Authorization", required = false) String token) {
 		Response<Associado> response = new Response<>();
 		response.setData((Associado) associadoService.findByStatus(status));
+		return ResponseEntity.ok(response);
+	}
+	
+	
+	@GetMapping(value = "associado/{page}/{size}")
+	public ResponseEntity<Response<Associado>> findAll(
+			@PathVariable int page,
+			@PathVariable int size,
+			@RequestHeader(name = "Authorization", required = false) String token) {
+		Response<Associado> response = new Response<>(); 
+		response.setData((Associado) associadoService.findAll(page, size));
 		return ResponseEntity.ok(response);
 	}
 
