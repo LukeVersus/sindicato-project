@@ -58,7 +58,7 @@ public class AssociadoServiceImpl extends GenericServiceImpl<Associado, Associad
 		associadoRepository.deleteById(id);
 	}
 	
-	public Page<Associado> findByCpf(int page, int size, String cpf) {
+	public Page<Associado> findByCpf(int page, String cpf, int size ) {
 		Pageable pageable = PageRequest.of(page, size);
 		return associadoRepository.findByCpf(pageable, cpf);
 	}

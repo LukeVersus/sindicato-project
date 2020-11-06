@@ -66,14 +66,14 @@ public class AssociadoResource extends GenericResource<Associado, AssociadoServi
 		return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping(value = "cpf/{cpf}/{page}/{size}")
+	@GetMapping(value = "{page}/{cpf}/{size}")
 	public ResponseEntity<Response<Page<Associado>>> buscaCandidato(
-			@PathVariable String cpf,
-			@PathVariable int page, 
+			@PathVariable int page,
+			@PathVariable String cpf,			 
 			@PathVariable int size,
 			@RequestHeader(name = "Authorization", required = false) String token) {
 		Response<Page<Associado>> response = new Response<>();
-		response.setData(associadoService.findByCpf(page, size, cpf));
+		response.setData(associadoService.findByCpf(page, cpf, size));
 		return ResponseEntity.ok(response);
 		
 	}
